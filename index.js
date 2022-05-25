@@ -21,6 +21,7 @@ async function run() {
         const partsDatabase = client.db("PartsSupplier").collection("Parts");
         const bookingsDatabase = client.db("PartsSupplier").collection("bookings");
         const paymentDatabase = client.db("PartsSupplier").collection("payments");
+        const reviewDatabase = client.db("PartsSupplier").collection("reviews");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -56,6 +57,20 @@ async function run() {
 
             res.send(result);
         })
+
+        app.post('/review', async (req, res) => {
+
+            const review = req.body;
+            const result = await reviewDatabase.insertOne(review);
+            res.send(result)
+        })
+
+        app.get('/review', async (req, res) => {
+            const query = {};
+            const result = await reviewDatabase.find(query).toArray();
+            res.send(result);
+        })
+
         //start
 
         app.get('/booking/:id', async (req, res) => {
