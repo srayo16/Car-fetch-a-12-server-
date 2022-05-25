@@ -23,6 +23,7 @@ async function run() {
         const paymentDatabase = client.db("PartsSupplier").collection("payments");
         const reviewDatabase = client.db("PartsSupplier").collection("reviews");
         const informationDatabase = client.db("PartsSupplier").collection("userInformation");
+        const usersDatabase = client.db("PartsSupplier").collection("users");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -98,6 +99,40 @@ async function run() {
             res.send(result);
 
         })
+
+        app.get('/user', async (req, res) => {
+            const users = await usersDatabase.find().toArray();
+            res.send(users);
+        });
+
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await usersDatabase.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
+
+        app.put('/user/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const updateDoc = {
+                $set: { role: 'admin' },
+            };
+            const result = await usersDatabase.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await usersDatabase.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
 
         //start
 
