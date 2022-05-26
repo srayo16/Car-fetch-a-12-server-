@@ -39,6 +39,22 @@ async function run() {
             res.send(result);
         })
 
+        app.post('/parts', async (req, res) => {
+            const product = req.body;
+            // const doc = {
+            //     product,
+            // }
+            const result = await partsDatabase.insertOne(product);
+            res.send(result);
+        })
+
+        app.delete('/parts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await partsDatabase.deleteOne(query);
+            res.send(result);
+        })
+
         app.get('/booking', async (req, res) => {
             const query = {};
             const result = await bookingsDatabase.find(query).toArray();
@@ -105,17 +121,11 @@ async function run() {
             res.send(users);
         });
 
-        app.get('/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const user = await usersDatabase.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
-            res.send({ admin: isAdmin })
-        })
 
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await usersDatabase.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
+            const isAdmin = user?.role === 'admin';
             res.send({ admin: isAdmin })
         })
 
