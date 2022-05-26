@@ -52,11 +52,11 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/booking', async (req, res) => {
+        app.get('/book', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
+            // console.log(query);
             const result = await bookingsDatabase.find(query).toArray();
-
             res.send(result);
         })
 
@@ -130,6 +130,16 @@ async function run() {
             res.send(result);
         })
 
+        app.put('/all-booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: { status: 'shipped' },
+            };
+            const result = await bookingsDatabase.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -170,6 +180,7 @@ async function run() {
 
 
         })
+
 
         app.post("/create-payment-intent", async (req, res) => {
             const bookings = req.body;
