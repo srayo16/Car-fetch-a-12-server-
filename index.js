@@ -41,14 +41,14 @@ async function run() {
         const usersDatabase = client.db("PartsSupplier").collection("users");
 
 
-        app.get('/parts', verifyJWT, async (req, res) => {
+        app.get('/parts', async (req, res) => {
             const query = {};
             const result = await partsDatabase.find(query).toArray();
             res.send(result);
 
         })
 
-        app.get('/parts/:id', async (req, res) => {
+        app.get('/parts/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await partsDatabase.findOne(query);
@@ -57,9 +57,6 @@ async function run() {
 
         app.post('/parts', async (req, res) => {
             const product = req.body;
-            // const doc = {
-            //     product,
-            // }
             const result = await partsDatabase.insertOne(product);
             res.send(result);
         })
@@ -99,7 +96,7 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/review', verifyJWT, async (req, res) => {
+        app.get('/review', async (req, res) => {
             const query = {};
             const result = await reviewDatabase.find(query).toArray();
             res.send(result);
